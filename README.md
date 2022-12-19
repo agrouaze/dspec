@@ -1,2 +1,2 @@
 # dspec
-momentum spectrum decompposition
+momentum spectrum decomposition

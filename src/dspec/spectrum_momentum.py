@@ -191,6 +191,11 @@ def orthogonalDecompSpec(kmin, kmax, cspc):
     logging.debug('S = %s', len(S))
     return S
 
+def computeOrthogonalMoments(real_part_spectrum, imaginary_part_spectrum,kmax=KMAX, kmin=KMIN):
+    cspc = prepareSpectra(real_part_spectrum, imaginary_part_spectrum, kmax=kmax, kmin=kmin)
+    S = orthogonalDecompSpec(kmin, kmax, cspc)
+    return S
+
 
 def prepareSpectra(real_part_spectrum, imaginary_part_spectrum, kmax=KMAX, kmin=KMIN):
     """

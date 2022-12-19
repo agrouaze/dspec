@@ -29,6 +29,7 @@ one_spec_re
 ## compute 20 orthogonal momentum
 ```python
 import spectrum_momentum
-decomp_moments = spectrum_momentum.orthogonalDecompSpec(kmin=spectrum_momentum.KMIN,kmax=spectrum_momentum.KMAX,cspc=cspc)
+decomp_moments = spectrum_momentum.orthogonalDecompSpec(real_part_spectrum=one_spec_re,
+                                                        imaginary_part_spectrum=one_spec_im)
 decomp_moments
 ```

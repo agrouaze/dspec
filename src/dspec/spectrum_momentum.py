@@ -70,19 +70,25 @@ def transform_k_into_index(inter, k_rg, k_az):
 def filter_cartesian_with_wavelength_ring(lower_wl, higher_wl, one_spec_re):
     """
 
-    :param lower_wl: float
-    :param higher_wl: float
+    :param lower_wl: float [m]
+    :param higher_wl: float [m]
     :param one_spec_re: xarray.DataArray
     :return:
     """
     pol_lower = get_polygon_wavenumber(wavenumber_val=lower_wl)
     pol_higher = get_polygon_wavenumber(wavenumber_val=higher_wl)
     KX, KY = np.meshgrid(one_spec_re.k_rg, one_spec_re.k_az)
-
+    logging.debug('KX : %s',KX)
     pp = np.stack([KX.ravel(), KY.ravel()]).T
     multipp = MultiPoint(pp)
     ring = pol_higher.symmetric_difference(pol_lower)
+    # from matplotlib import pyplot as plt
+    # plt.figure()
+    # plt.plot(*ring.exterior.xy)
+    # plt.plot(*ring.interiors[0].xy)
+    # logging.debug('ring : %s',ring)
     inter = ring.intersection(multipp)
+    logging.debug('inter : %s',inter)
     range_indexes, az_indexes = transform_k_into_index(inter, k_rg=one_spec_re.k_rg, k_az=one_spec_re.k_az)
     all_zeros = np.zeros(one_spec_re.shape)
     coords = (az_indexes, range_indexes)
@@ -192,6 +198,14 @@ def orthogonalDecompSpec(kmin, kmax, cspc):
     return S
 
 def computeOrthogonalMoments(real_part_spectrum, imaginary_part_spectrum,kmax=KMAX, kmin=KMIN):
+    """
+
+    :param real_part_spectrum: xarray.DataArray with k_rg and k_az coordinates
+    :param imaginary_part_spectrum: xarray.DataArray with k_rg and k_az coordinates
+    :param kmax: float m-1
+    :param kmin: float m-1
+    :return:
+    """
     cspc = prepareSpectra(real_part_spectrum, imaginary_part_spectrum, kmax=kmax, kmin=kmin)
     S = orthogonalDecompSpec(kmin, kmax, cspc)
     return S
@@ -207,8 +221,8 @@ def prepareSpectra(real_part_spectrum, imaginary_part_spectrum, kmax=KMAX, kmin=
         CWAVE: (np.ndarray) 20 floats computed on X spectra
     """
     lower_wl = 2 * np.pi / kmax
-    higher_lambda = 2 * np.pi / kmin
-    sub_re = filter_cartesian_with_wavelength_ring(lower_wl, higher_lambda, real_part_spectrum)
-    sub_im = filter_cartesian_with_wavelength_ring(lower_wl, higher_lambda, imaginary_part_spectrum)
+    higher_wl = 2 * np.pi / kmin
+    sub_re = filter_cartesian_with_wavelength_ring(lower_wl, higher_wl, real_part_spectrum)
+    sub_im = filter_cartesian_with_wavelength_ring(lower_wl, higher_wl, imaginary_part_spectrum)
     cspc = np.sqrt(sub_re ** 2 + sub_im ** 2)
     return cspc

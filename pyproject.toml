@@ -14,7 +14,7 @@ requires = ["setuptools", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-packages = ["stac_fastapi.opensearx"]
+#packages = ["stac_fastapi.opensearx"]
 
 [tool.setuptools_scm]
 fallback_version = "999"
